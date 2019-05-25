@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t bessilen/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run bessilen/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t bessilen/multi-client ./client
+  - docker build -t bessilen/multi-server ./server
+  - docker build -t bessilen/multi-proxy ./proxy
+  - docker build -t bessilen/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and pushe them to docker hub
+  - docker push bessilen/multi-client
+  - docker push bessilen/multi-server
+  - docker push bessilen/multi-worker
+  - docker push bessilen/multi-proxy
