@@ -21,3 +21,16 @@ after_success:
   - docker push bessilen/multi-server
   - docker push bessilen/multi-worker
   - docker push bessilen/multi-proxy
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-central-1"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-eu-central-1-714871639201"
+  bucket_path: "docker-react"
+  on:
+   branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
